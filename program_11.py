@@ -111,7 +111,7 @@ if __name__ == '__main__':
     
     # define blank dictionaries for each file type
     DataDF = {}
-    MetricsDF = {}
+    MissingValues = {}
     MonthlyAverages = {}
     
     # process txt files to get daily streamflow values and annual monhtly averages
@@ -137,7 +137,7 @@ if __name__ == '__main__':
     plt.plot(DataDF['Tippe']['2015-01-01':'2019-12-30']['Discharge'], label="Tippecanoe River")
     plt.xlabel('Date', fontsize=15)
     plt.ylabel('Discharge\n cubic feet per second (cfs)', fontsize=15)
-    plt.title('Daily streamflow of Wildcat Creek and Tippecanoe River', fontsize=16)
+    plt.title('Daily streamflow', fontsize=20)
     plt.legend(fontsize=13)
     fig = plt.gcf()
     fig.set_size_inches(9, 6)
@@ -151,7 +151,7 @@ if __name__ == '__main__':
     plt.plot(DataDF['Tippe']['Coeff Var'][50:101], label='Tippecanoe River')
     plt.xlabel('Date', fontsize=15)
     plt.ylabel('Coefficient of variation', fontsize=15)
-    plt.title('Annual Coefficient of Variation', fontsize=16)
+    plt.title('Annual Coefficient of Variation', fontsize=20)
     plt.legend(fontsize=13)
     fig = plt.gcf()
     fig.set_size_inches(10, 6.5)
@@ -165,7 +165,7 @@ if __name__ == '__main__':
     plt.plot(DataDF['Tippe']['Tqmean'][50:101], label='Tippecanoe River')
     plt.xlabel('Date', fontsize=15)
     plt.ylabel('Tqmean (&)', fontsize=15)
-    plt.title('Fraction of time daily streamflow exceeds mean streamflow each year', fontsize=16)
+    plt.title('Tqmean', fontsize=20)
     plt.legend(loc="upper right", fontsize=13)
     fig = plt.gcf()
     fig.set_size_inches(10, 6.5)
@@ -178,7 +178,7 @@ if __name__ == '__main__':
     plt.plot(DataDF['Tippe']['R-B Index'][50:101], label='Tippecanoe River')
     plt.xlabel('Date', fontsize=15)
     plt.ylabel('R-B Index', fontsize=15)
-    plt.title('Richards-Baker Flashiness Index (R-B Index)', fontsize=16)
+    plt.title('Richards-Baker Flashiness Index (R-B Index)', fontsize=20)
     plt.legend( fontsize=13)
     fig = plt.gcf()
     fig.set_size_inches(10, 6.5)
@@ -192,7 +192,7 @@ if __name__ == '__main__':
     plt.plot(DataDF['Tippe'], label='Tippecanoe River')
     plt.xlabel('Month', fontsize=15)
     plt.ylabel('Discharge\n cubic feet per second (cfs)', fontsize=15)
-    plt.title('Monthly average streamflow - annual average', fontsize=16)
+    plt.title('Annual average monthly streamflow', fontsize=20)
     plt.legend( fontsize=13)
     fig = plt.gcf()
     fig.set_size_inches(10, 6.5)
@@ -201,8 +201,7 @@ if __name__ == '__main__':
     
     #Return period of annual peak flow events
         
-    
-    
+
     
     
     
