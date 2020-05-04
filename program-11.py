@@ -37,9 +37,10 @@ def ReadData( fileName ):
     
      # replace negative values with nan
     DataDF.loc[DataDF['Discharge'] < 0, 'Discharge'] = np.NaN
+
     
-   
-    return( DataDF )
+    return( DataDF, MissingValues )
+
 
 def ClipData( DataDF, startDate, endDate ):
     """This function clips the given time series dataframe to a given range 
@@ -49,7 +50,11 @@ def ClipData( DataDF, startDate, endDate ):
     #clip data 
     DataDF = DataDF.loc[startDate:endDate]  
     
-    return( DataDF )
+    # quantify the number of missing values
+    MissingValues = DataDF["Discharge"].isnull().sum()
+    
+    return( DataDF, MissingValues )
+
 
 def ReadMetrics( fileName ):
     """This function takes a filename as input, and returns a dataframe with
@@ -61,7 +66,7 @@ def ReadMetrics( fileName ):
     # open and read the csv file
     DataDF = pd.read_csv(fileName, header=0, parse_dates=[0], index_col='Date')
     
-    return( MetricsDF )
+    return( DataDF )
 
 def GetMonthlyAverages(DataDF):
     """This function calculates annual average monthly flow.  
@@ -101,8 +106,8 @@ if __name__ == '__main__':
                  "Tippe": "TippecanoeRiver_Discharge_03331500_19431001-20200315.txt" }
     
     # define csv names as a dictionary
-    csvName = {"Annual": "Annual_Metrics.csv",
-               "Monthly": "Monthly_Metrics.csv"}
+    csvName = {"Annual": "Annual_Metrics-Copy.csv",
+               "Monthly": "Monthly_Metrics-Copy.csv"}
     
     # define blank dictionaries for each file type
     DataDF = {}
@@ -120,7 +125,7 @@ if __name__ == '__main__':
         
     # process csv files to get daily metrics   
     for csv in csvName.keys():
-        MetricsDF[csv] = ReadMetrics(csvName[csv])
+        DataDF[csv] = ReadMetrics(csvName[csv])
         
         
         
@@ -142,8 +147,8 @@ if __name__ == '__main__':
     
    # Annual coefficient of variation
 
-    plt.plot(MetricsDF['Wildcat']['Coeff Var'][0:50], label='Wildcat Creek')
-    plt.plot(MetricsDF['Tippe']['Coeff Var'][50:101], label='Tippecanoe River')
+    plt.plot(DataDF['Wildcat']['Coeff Var'][0:50], label='Wildcat Creek')
+    plt.plot(DataDF['Tippe']['Coeff Var'][50:101], label='Tippecanoe River')
     plt.xlabel('Date', fontsize=15)
     plt.ylabel('Coefficient of variation', fontsize=15)
     plt.title('Annual Coefficient of Variation', fontsize=16)
@@ -156,8 +161,8 @@ if __name__ == '__main__':
    
     #Annual TQmean 
     
-    plt.plot(MetricsDF['Wildcat']['Tqmean'][0:50], label='Wildcat Creek')
-    plt.plot(MetricsDF['Tippe']['Tqmean'][50:101], label='Tippecanoe River')
+    plt.plot(DataDF['Wildcat']['Tqmean'][0:50], label='Wildcat Creek')
+    plt.plot(DataDF['Tippe']['Tqmean'][50:101], label='Tippecanoe River')
     plt.xlabel('Date', fontsize=15)
     plt.ylabel('Tqmean (&)', fontsize=15)
     plt.title('Fraction of time daily streamflow exceeds mean streamflow each year', fontsize=16)
@@ -169,8 +174,8 @@ if __name__ == '__main__':
     
     #Annual R-B index
     
-    plt.plot(MetricsDF['Wildcat']['R-B Index'][0:50], label='Wildcat Creek')
-    plt.plot(MetricsDF['Tippe']['R-B Index'][50:101], label='Tippecanoe River')
+    plt.plot(DataDF['Wildcat']['R-B Index'][0:50], label='Wildcat Creek')
+    plt.plot(DataDF['Tippe']['R-B Index'][50:101], label='Tippecanoe River')
     plt.xlabel('Date', fontsize=15)
     plt.ylabel('R-B Index', fontsize=15)
     plt.title('Richards-Baker Flashiness Index (R-B Index)', fontsize=16)
@@ -183,8 +188,8 @@ if __name__ == '__main__':
         
     #Average annual monthly flow
     
-    plt.plot(MonthlyAverages['Wildcat'], label='Wildcat Creek')
-    plt.plot(MonthlyAverages['Tippe'], label='Tippecanoe River')
+    plt.plot(DataDF['Wildcat'], label='Wildcat Creek')
+    plt.plot(DataDF['Tippe'], label='Tippecanoe River')
     plt.xlabel('Month', fontsize=15)
     plt.ylabel('Discharge\n cubic feet per second (cfs)', fontsize=15)
     plt.title('Monthly average streamflow - annual average', fontsize=16)
