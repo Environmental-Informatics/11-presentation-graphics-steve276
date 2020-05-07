@@ -33,11 +33,12 @@ def ReadData( fileName ):
     DataDF = DataDF.set_index('Date')
     
     # quantify the number of missing values
-    MissingValues = DataDF["Discharge"].isnull().sum()
+    MissingValues = DataDF["Discharge"].isna().sum()
     
-     # replace negative values with nan
+    MissingValues_dict = {'Missing Values': MissingValues}
+    
+    # replace negative values with nan
     DataDF.loc[DataDF['Discharge'] < 0, 'Discharge'] = np.NaN
-
     
     return( DataDF, MissingValues )
 
@@ -123,12 +124,12 @@ if __name__ == '__main__':
         
         MonthlyAverages[file] = GetMonthlyAverages(DataDF[file])
         
-    # process csv files to get daily metrics   
+    # process csv files to get annual and monthly metrics   
     for csv in csvName.keys():
         DataDF[csv] = ReadMetrics(csvName[csv])
-        
-        
-        
+    
+
+
     #generate plots 
     
     #Daily flow for last 5 years of the record
@@ -182,7 +183,7 @@ if __name__ == '__main__':
     plt.legend( fontsize=13)
     fig = plt.gcf()
     fig.set_size_inches(10, 6.5)
-    plt.savefig('RBindex.png')
+    plt.savefig('RBindex.png', dpi=96)
     plt.show()
         
         
@@ -196,13 +197,34 @@ if __name__ == '__main__':
     plt.legend( fontsize=13)
     fig = plt.gcf()
     fig.set_size_inches(10, 6.5)
-    plt.savefig('monthly-averages.png')
+    plt.savefig('monthly-averages.png', dpi=96)
     plt.show()
     
-    #Return period of annual peak flow events
-        
+    #Exceedence Probability
 
+    # dataframes for exceedence probability calculation
+    pfW = pd.DataFrame(sorted(DataDF['Annual']['Peak Flow'][0:50]))
+    pfT = pd.DataFrame(sorted(DataDF['Annual']['Peak Flow'][50:101]))
+
+    list_pf = [pfW,pfT]
+
+    for i in range(2):
+        df = list_pf[i]
+        df['rank'] = df.rank()
+        df['p'] = df['rank']/(len(df)+1)
     
+    plt.plot(pfW['p'], pfW[0], label='Wildcat Creek')
+    plt.plot(pfT['p'], pfT[0], label='Tippecanoe River')
+    plt.xlabel('Exceedence Probability', fontsize=15)
+    plt.ylabel('Peak Flow (cfs)', fontsize=15)
+    plt.title('Return period of annual peak flow events', fontsize=20)
+    plt.legend( fontsize=13)
+    fig = plt.gcf()
+    fig.set_size_inches(10, 6.5)
+    plt.savefig('ExceedenceProb.png', dpi=96)
+    plt.show()
+    
+
     
     
     
