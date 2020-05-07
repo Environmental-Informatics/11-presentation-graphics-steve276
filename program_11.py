@@ -202,7 +202,6 @@ if __name__ == '__main__':
     
     #Exceedence Probability
 
-    # dataframes for exceedence probability calculation
     pfW = pd.DataFrame(sorted(DataDF['Annual']['Peak Flow'][0:50]))
     pfT = pd.DataFrame(sorted(DataDF['Annual']['Peak Flow'][50:101]))
 
