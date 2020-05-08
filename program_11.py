@@ -214,7 +214,7 @@ if __name__ == '__main__':
 
     for i in range(2):
         df = list_pf[i]
-        df['rank'] = df.rank()
+        df['rank'] = df.rank(ascending=False)
         df['p'] = df['rank']/(len(df)+1)
     
     plt.plot(pfW['p'], pfW[0], label='Wildcat Creek')
