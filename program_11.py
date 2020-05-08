@@ -206,7 +206,6 @@ if __name__ == '__main__':
     
     #Exceedence Probability
             
-    #DataDF = pd.read_csv("Annual_Metrics-Copy1.csv", header=0, parse_dates=[0], index_col='Date')
     pfW = pd.DataFrame(sorted(DataDF['Annual']['Peak Flow'][0:50]))
     pfT = pd.DataFrame(sorted(DataDF['Annual']['Peak Flow'][50:101]))
 
