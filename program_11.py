@@ -33,7 +33,7 @@ def ReadData( fileName ):
     DataDF = DataDF.set_index('Date')
     
     # quantify the number of missing values
-    MissingValues = DataDF["Discharge"].isna().sum()
+    MissingValues = DataDF["Discharge"].isnull().sum()
     
     MissingValues_dict = {'Missing Values': MissingValues}
     
@@ -107,8 +107,8 @@ if __name__ == '__main__':
                  "Tippe": "TippecanoeRiver_Discharge_03331500_19431001-20200315.txt" }
     
     # define csv names as a dictionary
-    csvName = {"Annual": "Annual_Metrics-Copy.csv",
-               "Monthly": "Monthly_Metrics-Copy.csv"}
+    csvName = {"Annual": "Annual_Metrics.csv",
+               "Monthly": "Monthly_Metrics.csv"}
     
     # define blank dictionaries for each file type
     DataDF = {}
@@ -118,18 +118,22 @@ if __name__ == '__main__':
     # process txt files to get daily streamflow values and annual monhtly averages
     for file in fileName.keys():
         
-        DataDF[file] = ReadData(fileName[file])
         
-        DataDF[file] = ClipData( DataDF[file], '1969-10-01', '2019-09-30' )
+        #DataDF[file] = ReadData(fileName[file])
+        DataDF[file], MissingValues[file] = ReadData(fileName[file])
+        
+        #DataDF[file] = ClipData( DataDF[file], '1969-10-01', '2019-09-30' )
+        DataDF[file], MissingValues[file] = ClipData( DataDF[file], '1969-10-01', '2019-09-30' )
+        
         
         MonthlyAverages[file] = GetMonthlyAverages(DataDF[file])
         
     # process csv files to get annual and monthly metrics   
     for csv in csvName.keys():
         DataDF[csv] = ReadMetrics(csvName[csv])
-    
-
-
+        
+        
+        
     #generate plots 
     
     #Daily flow for last 5 years of the record
@@ -148,8 +152,8 @@ if __name__ == '__main__':
     
    # Annual coefficient of variation
 
-    plt.plot(DataDF['Wildcat']['Coeff Var'][0:50], label='Wildcat Creek')
-    plt.plot(DataDF['Tippe']['Coeff Var'][50:101], label='Tippecanoe River')
+    plt.plot(DataDF['Annual']['Coeff Var'][0:50], label='Wildcat Creek')
+    plt.plot(DataDF['Annual']['Coeff Var'][50:101], label='Tippecanoe River')
     plt.xlabel('Date', fontsize=15)
     plt.ylabel('Coefficient of variation', fontsize=15)
     plt.title('Annual Coefficient of Variation', fontsize=20)
@@ -162,8 +166,8 @@ if __name__ == '__main__':
    
     #Annual TQmean 
     
-    plt.plot(DataDF['Wildcat']['Tqmean'][0:50], label='Wildcat Creek')
-    plt.plot(DataDF['Tippe']['Tqmean'][50:101], label='Tippecanoe River')
+    plt.plot(DataDF['Annual']['Tqmean'][0:50], label='Wildcat Creek')
+    plt.plot(DataDF['Annual']['Tqmean'][50:101], label='Tippecanoe River')
     plt.xlabel('Date', fontsize=15)
     plt.ylabel('Tqmean (&)', fontsize=15)
     plt.title('Tqmean', fontsize=20)
@@ -175,8 +179,8 @@ if __name__ == '__main__':
     
     #Annual R-B index
     
-    plt.plot(DataDF['Wildcat']['R-B Index'][0:50], label='Wildcat Creek')
-    plt.plot(DataDF['Tippe']['R-B Index'][50:101], label='Tippecanoe River')
+    plt.plot(DataDF['Annual']['R-B Index'][0:50], label='Wildcat Creek')
+    plt.plot(DataDF['Annual']['R-B Index'][50:101], label='Tippecanoe River')
     plt.xlabel('Date', fontsize=15)
     plt.ylabel('R-B Index', fontsize=15)
     plt.title('Richards-Baker Flashiness Index (R-B Index)', fontsize=20)
@@ -189,8 +193,8 @@ if __name__ == '__main__':
         
     #Average annual monthly flow
     
-    plt.plot(DataDF['Wildcat'], label='Wildcat Creek')
-    plt.plot(DataDF['Tippe'], label='Tippecanoe River')
+    plt.plot(MonthlyAverages['Wildcat'], label='Wildcat Creek')
+    plt.plot(MonthlyAverages['Tippe'], label='Tippecanoe River')
     plt.xlabel('Month', fontsize=15)
     plt.ylabel('Discharge\n cubic feet per second (cfs)', fontsize=15)
     plt.title('Annual average monthly streamflow', fontsize=20)
@@ -201,7 +205,8 @@ if __name__ == '__main__':
     plt.show()
     
     #Exceedence Probability
-
+            
+    #DataDF = pd.read_csv("Annual_Metrics-Copy1.csv", header=0, parse_dates=[0], index_col='Date')
     pfW = pd.DataFrame(sorted(DataDF['Annual']['Peak Flow'][0:50]))
     pfT = pd.DataFrame(sorted(DataDF['Annual']['Peak Flow'][50:101]))
 
@@ -227,5 +232,3 @@ if __name__ == '__main__':
     
     
     
-    
- 
